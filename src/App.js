@@ -9,7 +9,7 @@ const TITLE = "云天化视频平台"
 
 // datas
 const Thumbs = [
-  { title: '111', p_url: 'https://tse3-mm.cn.bing.net/th/id/OIP-C.W9Vmgn4nqhN2X-KhIUtniQHaEK?w=305&h=180&c=7&r=0&o=5&dpr=2&pid=1.7', v_url: 'http://10.1.2.27/WebReport/video/10.mp4' },
+  { title: '复仇者联盟1111', note: 'blahblah', p_url: 'https://tse3-mm.cn.bing.net/th/id/OIP-C.W9Vmgn4nqhN2X-KhIUtniQHaEK?w=305&h=180&c=7&r=0&o=5&dpr=2&pid=1.7', v_url: 'http://10.1.2.27/WebReport/video/10.mp4' },
   { title: '222', p_url: 'https://tse1-mm.cn.bing.net/th/id/OIP-C.G57BoVevShzkLhBF5ONxOgHaLD?w=197&h=295&c=7&r=0&o=5&dpr=2&pid=1.7', v_url: 'http://10.1.2.27/WebReport/video/Sunset-Lapse.mp4' },
   { title: '333', p_url: 'https://tse2-mm.cn.bing.net/th/id/OIP-C.dHe5E7QPKyni0ETe-DOwrgHaLF?w=197&h=295&c=7&r=0&o=5&dpr=2&pid=1.7', v_url: 'http://10.1.2.27/WebReport/video/02.mp4' },
   { title: '444', p_url: 'https://tse1-mm.cn.bing.net/th/id/OIP-C.EpX8wvAau9cwZU-AYHQR4AAAAA?w=197&h=292&c=7&r=0&o=5&dpr=2&pid=1.7' },
@@ -31,8 +31,8 @@ const getWindowType = (width, height) => {
   const whr = width / height;
   // console.log('window WHR', whr);
   if (whr < 1) return 'portrait';
-  if (whr > 1 && whr < ThumbWHR * 2) return 'normal';
-  if (whr >= ThumbWHR * 2) return 'wild';
+  if (whr > 1 && whr < ThumbWHR * 1.25) return 'normal';
+  if (whr >= ThumbWHR * 1.25) return 'wild';// 20:9以上就算wild了
   return 'normal';
 }
 
@@ -76,52 +76,61 @@ function App() {
 
   const thumbSize = thumbSizes[windowType]
 
+  const playerStyles = {
+    'portrait': { display: 'block', flexWrap: 'wrap' },
+    'normal': { margin: 16, padding: 16, boxSizing: 'border-box', border: 'grey 1px solid' },
+    'wild': { marginLeft: thumbSize[0] / 2, marginRight: thumbSize[0] / 2, padding: 16, boxSizing: 'border-box', border: 'grey 1px solid' } 
+  }
+
   return (
     <div className="App">
+      <div style={{ height: headerHeight }}>
+        {TITLE}
+      </div>
       {
         playMode ?
-          <div style={{ width: 400, height: 300 }}>
-            <p>{Thumbs[selectedIndex].title}</p>
-            <p onClick={() => setPlayMode(false)}>close</p>
-            <Player sources={{
-              hd: {
-                play_url: Thumbs[selectedIndex].v_url,
-              },
-            }}
-              autoplay={true}
-            // initialObjectFit={'scale-down'}
-            />
+          <div className="Gallery" style={ playerStyles[windowType] }>
+            <div style={{ flex: 1 }}>
+              <Player sources={{
+                hd: {
+                  play_url: Thumbs[selectedIndex].v_url,
+                },
+              }}
+                autoplay={true}
+              // initialObjectFit={'scale-down'}
+              />
+            </div>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 16 }}>
+              <h1>{Thumbs[selectedIndex].title}</h1>
+              <p style={{ flex: 1, textAlign: 'left' }}>{Thumbs[selectedIndex].note}</p>
+              <p onClick={() => setPlayMode(false)}>Back</p>
+            </div>
           </div>
           :
-          <>
-            <div style={{ height: headerHeight }}>
-              {TITLE}
-            </div>
-            <div className="Gallery">
-              {
-                Thumbs.map((img, i) =>
-                  <div key={i}
-                    onMouseEnter={() => handleHover(i)}
-                    onMouseLeave={() => handleHover(-1)}
-                    onClick={() => handleClickPlay(i)}
-                    className={i === selectedIndex ? "Thumb ThumbSelected" : "Thumb"}
-                    style={{ backgroundImage: `url(${img.p_url})`, width: thumbSize[0], height: thumbSize[1] }}>
-                    {
-                      i === selectedIndex &&
-                      <div className="banner">
-                        <p>{img.title}</p>
-                      </div>
-                    }
-                  </div>)
-              }
-            </div>
-            <div style={{ height: footerHeight }}>
-              <p>
-                {selectedIndex} {`size h:${gallerySize.height} w:${gallerySize.width}`} {`window WHR: ${windowType}`}
-              </p>
-            </div>
-          </>
+          <div className="Gallery">
+            {
+              Thumbs.map((img, i) =>
+                <div key={i}
+                  onMouseEnter={() => handleHover(i)}
+                  onMouseLeave={() => handleHover(-1)}
+                  onClick={() => handleClickPlay(i)}
+                  className={i === selectedIndex ? "Thumb ThumbSelected" : "Thumb"}
+                  style={{ backgroundImage: `url(${img.p_url})`, width: thumbSize[0], height: thumbSize[1] }}>
+                  {
+                    i === selectedIndex &&
+                    <div className="banner">
+                      <p>{img.title}</p>
+                    </div>
+                  }
+                </div>)
+            }
+          </div>
       }
+      <div style={{ height: footerHeight }}>
+        <p>
+          {selectedIndex} {`size h:${gallerySize.height} w:${gallerySize.width}`} {`window WHR: ${windowType}`}
+        </p>
+      </div>
     </div>
 
   );
