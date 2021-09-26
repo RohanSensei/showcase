@@ -1,25 +1,15 @@
-// import logo from './logo.svg';
+import logo from './assets/ythlogo108.png';
 import './App.css';
+import C from './Constants';
+import Videos from './Videos';
 
 import { useEffect, useState, useCallback } from 'react';
 
 import Player from 'griffith'
 
-const TITLE = "云天化视频平台"
-
-// datas
-const Thumbs = [
-  { title: '复仇者联盟1111', note: 'blahblah', p_url: 'https://tse3-mm.cn.bing.net/th/id/OIP-C.W9Vmgn4nqhN2X-KhIUtniQHaEK?w=305&h=180&c=7&r=0&o=5&dpr=2&pid=1.7', v_url: 'http://10.1.2.27/WebReport/video/10.mp4' },
-  { title: '222', p_url: 'https://tse1-mm.cn.bing.net/th/id/OIP-C.G57BoVevShzkLhBF5ONxOgHaLD?w=197&h=295&c=7&r=0&o=5&dpr=2&pid=1.7', v_url: 'http://10.1.2.27/WebReport/video/Sunset-Lapse.mp4' },
-  { title: '333', p_url: 'https://tse2-mm.cn.bing.net/th/id/OIP-C.dHe5E7QPKyni0ETe-DOwrgHaLF?w=197&h=295&c=7&r=0&o=5&dpr=2&pid=1.7', v_url: 'http://10.1.2.27/WebReport/video/02.mp4' },
-  { title: '444', p_url: 'https://tse1-mm.cn.bing.net/th/id/OIP-C.EpX8wvAau9cwZU-AYHQR4AAAAA?w=197&h=292&c=7&r=0&o=5&dpr=2&pid=1.7' },
-  { title: '555', p_url: 'https://tse3-mm.cn.bing.net/th/id/OIP-C.udtFihsO6W7eMMBvhjLpFwHaLO?w=197&h=298&c=7&r=0&o=5&dpr=2&pid=1.7' },
-  { title: '666', p_url: 'https://tse3-mm.cn.bing.net/th/id/OIP-C.X4A4aDs8erMOcSKA_Ff9lAHaLH?w=197&h=296&c=7&r=0&o=5&dpr=2&pid=1.7' },
-]
-
 // 缩略图w/h
 const ThumbWHR = 16 / 9;
-const footerHeight = 48;
+const footerHeight = 36;
 const headerHeight = 48;
 
 const getGallerySize = () => ({
@@ -82,10 +72,12 @@ function App() {
     'wild': { marginLeft: thumbSize[0] / 2, marginRight: thumbSize[0] / 2, padding: 16, boxSizing: 'border-box', border: 'grey 1px solid' } 
   }
 
+  const selectedVideo = Videos[selectedIndex];
+
   return (
     <div className="App">
-      <div style={{ height: headerHeight }}>
-        {TITLE}
+      <div className="Header" style={{ height: headerHeight, fontSize: headerHeight * .5 }}>
+        <img alt={C.title} src={logo} style={{ height: headerHeight - 8, marginRight: 8}}/> {C.title}
       </div>
       {
         playMode ?
@@ -93,23 +85,23 @@ function App() {
             <div style={{ flex: 1 }}>
               <Player sources={{
                 hd: {
-                  play_url: Thumbs[selectedIndex].v_url,
+                  play_url: selectedVideo.v_url,
                 },
               }}
                 autoplay={true}
               // initialObjectFit={'scale-down'}
               />
             </div>
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 16 }}>
-              <h1>{Thumbs[selectedIndex].title}</h1>
-              <p style={{ flex: 1, textAlign: 'left' }}>{Thumbs[selectedIndex].note}</p>
-              <p onClick={() => setPlayMode(false)}>Back</p>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginLeft: 16 }}>
+              <h1>{selectedVideo.title}</h1>
+              <p style={{ flex: 1, textAlign: 'left' }}>{selectedVideo.note}</p>
+              <div className="Button" onClick={() => setPlayMode(false)}>返回</div>
             </div>
           </div>
           :
           <div className="Gallery">
             {
-              Thumbs.map((img, i) =>
+              Videos.map((img, i) =>
                 <div key={i}
                   onMouseEnter={() => handleHover(i)}
                   onMouseLeave={() => handleHover(-1)}
@@ -126,10 +118,10 @@ function App() {
             }
           </div>
       }
-      <div style={{ height: footerHeight }}>
-        <p>
-          {selectedIndex} {`size h:${gallerySize.height} w:${gallerySize.width}`} {`window WHR: ${windowType}`}
-        </p>
+      <div className="Footer" style={{ height: footerHeight, fontSize: footerHeight * .5 }}>
+         {C.copyright}
+         {/* {`size h:${gallerySize.height} w:${gallerySize.width}`}  */}
+         {/* {selectedIndex}  {`( ${windowType} )`} */}
       </div>
     </div>
 
