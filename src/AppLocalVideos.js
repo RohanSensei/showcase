@@ -5,10 +5,7 @@ import Videos from './Videos';
 
 import { useEffect, useState, useCallback } from 'react';
 
-// import Player from 'griffith'
-// import Videojs from 'video.js'
-import ReactPlayer from 'react-player/lazy';
-// import ReactHlsPlayer from 'react-hls-player';
+import Player from 'griffith'
 
 // 缩略图w/h
 const ThumbWHR = 16 / 9;
@@ -49,11 +46,10 @@ function App() {
     setSelectedIndex(i)
   }
 
-  const [fullMode, setFullMode] = useState(false);
-
-  const handleToggleFull = () => {
+  const [playMode, setPlayMode] = useState(false);
+  const handleClickPlay = () => {
     if (selectedIndex < 0) return;
-    setFullMode(!fullMode)
+    setPlayMode(true)
   }
 
   useEffect(() => {
@@ -85,70 +81,48 @@ function App() {
         <img alt={C.title} src={logo} style={{ height: headerHeight - 8, marginRight: 8 }} /> {C.title}
       </div>
       {
-        fullMode ? // fullscreen
+        playMode ?
           <div className="Gallery" style={playerStyles[windowType]}>
-            <div style={{ flex: 1 }}
-              onDoubleClick={() => handleToggleFull(selectedIndex)}>
-              <ReactPlayer url={selectedVideo.v_url}
-                playing
-                muted
-                // light // thumb pic
-                // controls
-                config={{
-                  file: {
-                    forceHLS: true
-                  }
-                }} />
-              {/* <Player sources={{
+            <div style={{ flex: 1 }}>
+              <Player sources={{
                 hd: {
                   play_url: selectedVideo.v_url,
                 },
               }}
                 autoplay={true}
               // initialObjectFit={'scale-down'}
-              /> */}
+              />
+            </div>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginLeft: 16 }}>
+              <h1>{selectedVideo.title}</h1>
+              <p style={{ flex: 1, textAlign: 'left' }}>{selectedVideo.note}</p>
+              <div className="Button" onClick={() => setPlayMode(false)}>返回</div>
             </div>
           </div>
-          : // gallery
+          :
           <div className="Gallery">
             {
-              Videos.map((v, i) =>
+              Videos.map((img, i) =>
                 <div key={i}
                   onMouseEnter={() => handleHover(i)}
                   onMouseLeave={() => handleHover(-1)}
-                  onDoubleClick={() => handleToggleFull(i)}
+                  onClick={() => handleClickPlay(i)}
                   className={i === selectedIndex ? "Thumb ThumbSelected" : "Thumb"}
                   style={{ width: thumbSize[0], height: thumbSize[1] }}>
-                  <ReactPlayer url={v.v_url} playing
-                    width={'100%'}
-                    height={'100%'}
-                    // controls
-                    config={{
-                      file: {
-                        forceHLS: true
-                      }
-                    }} />
-                    <div className="banner">
-                      <p>{v.title}</p>
-                    </div>
-                  {/* <ReactHlsPlayer
-                    src={v.v_url}
-                    hlsConfig={{
-                      maxLoadingDelay: 4,
-                      minAutoBitrate: 0,
-                      lowLatencyMode: true,
-                    }} */}
-                
-                  {/* <Player sources={{
+                  <Player sources={{
                     hd: {
-                      play_url: v.v_url,
+                      play_url: selectedVideo.v_url,
                     },
                   }}
                     autoplay={true}
-                    // hiddenPlayButton={true}
-                    useMSE={true}
                   // initialObjectFit={'scale-down'}
-                  /> */}
+                  />
+                  {
+                    // i === selectedIndex &&
+                    <div className="banner">
+                      <p>{img.title}</p>
+                    </div>
+                  }
                 </div>)
             }
           </div>
