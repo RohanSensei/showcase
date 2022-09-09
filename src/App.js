@@ -32,6 +32,9 @@ const getWindowType = (width, height) => {
 function App() {
 
   const [gallerySize, setGallerySize] = useState(getGallerySize());
+
+  const [showSelectMenu, setShowSelectMenu] = useState(false);
+
   // 可视范围最大显示行数2, 水平用平铺展开
   const thumbSizes = {
     'portrait': [gallerySize.width, Math.round(gallerySize.width / ThumbWHR)],
@@ -47,6 +50,11 @@ function App() {
 
   const handleHover = i => {
     setSelectedIndex(i)
+  }
+
+  const handleSelectMenu = () => {
+    // console.log('--->', showSelectMenu, selectedIndex)
+    setShowSelectMenu(!showSelectMenu)
   }
 
   const [fullMode, setFullMode] = useState(false);
@@ -85,6 +93,39 @@ function App() {
         <img alt={C.title} src={logo} style={{ height: headerHeight - 8, marginRight: 8 }} /> {C.title}
       </div>
       {
+        showSelectMenu &&
+        <>
+          <div className="overlay" onClick={handleSelectMenu} />
+          <div className="modal" style={{ width: '60%' }}>
+            <div className="Gallery">
+              {
+                Videos.map((v, i) =>
+                  <div key={i}
+                    onClick={handleSelectMenu}
+                    // onClick={handleSelectMenu}
+                    className={i === selectedIndex ? "Thumb ThumbSelected" : "Thumb"}
+                    style={{ width: thumbSize[0] / 2, height: thumbSize[1] / 2 }}>
+                    <ReactPlayer url={v.v_url}
+                      playing
+                      muted
+                      light
+                      width={'100%'}
+                      height={'100%'}
+                      config={{
+                        file: {
+                          forceHLS: true
+                        }
+                      }} />
+                    <div className="banner">
+                      <p onClick={handleSelectMenu}>{v.title}</p>
+                    </div>
+                  </div>)
+              }
+            </div>
+          </div>
+        </>
+      }
+      {
         fullMode ? // fullscreen
           <div className="Gallery" style={playerStyles[windowType]}>
             <div style={{ flex: 1 }}
@@ -117,6 +158,7 @@ function App() {
                   onMouseEnter={() => handleHover(i)}
                   onMouseLeave={() => handleHover(-1)}
                   onDoubleClick={() => handleToggleFull(i)}
+                  // onClick={handleSelectMenu}
                   className={i === selectedIndex ? "Thumb ThumbSelected" : "Thumb"}
                   style={{ width: thumbSize[0], height: thumbSize[1] }}>
                   <ReactPlayer url={v.v_url} playing
@@ -128,9 +170,9 @@ function App() {
                         forceHLS: true
                       }
                     }} />
-                    <div className="banner">
-                      <p>{v.title}</p>
-                    </div>
+                  <div className="banner">
+                    <p onClick={handleSelectMenu}>{v.title}</p>
+                  </div>
                   {/* <ReactHlsPlayer
                     src={v.v_url}
                     hlsConfig={{
@@ -138,7 +180,7 @@ function App() {
                       minAutoBitrate: 0,
                       lowLatencyMode: true,
                     }} */}
-                
+
                   {/* <Player sources={{
                     hd: {
                       play_url: v.v_url,

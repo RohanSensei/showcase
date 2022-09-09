@@ -86,3 +86,25 @@
     transform: rotate(360deg);
   }
 } */
+
+/* overlay styles, all needed */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 10;
+}
+
+/* just some content with arbitrary styles for explanation purposes */
+.modal {
+  position: relative;
+  background-color: #333;
+  padding: 16px;
+  margin: auto;
+  border-radius: 8px;
+  text-align: center;
+  z-index: 11; /* 1px higher than the overlay layer */
+}
